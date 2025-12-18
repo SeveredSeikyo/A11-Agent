@@ -1,0 +1,44 @@
+POST http://localhost:3000/agent
+Content-Type: application/json
+
+{
+    "message": "what's the weather in Hyderabad Today and send it to ashb01012000@gmail.com"
+}
+
+###
+
+POST http://localhost:3000/agent
+Content-Type: application/json
+
+{
+    "message": "Fetch Articles about AI in last 3 days and send it to ashb01012000@gmail.com."
+}
+
+###
+
+POST http://localhost:3000/agent 
+Content-Type: application/json
+
+{
+    "message": "What is Model Context Protocol?"
+}
+
+###
+
+POST http://localhost:3000/agent
+Content-Type: application/json
+
+{
+    "message": "Hey, quick help 🙂 What’s the weather like today in Hyderabad? Also, what’s the current date and time right now? I’ve been hearing a lot about Tavily lately — what exactly is it used for? Can you also check the latest AI news from the past week? Oh, and please send a quick email to testone01151990@gmail.com saying “Hi, this is a test message from the AI agent.” Also send weather details, articles, date and search response in slack and discord."
+}
+
+###
+
+POST http://localhost:3000/agent
+Content-Type: application/json
+
+{
+    "message": "Send Hii in Slack and Discord. Also fetch current time."
+}
+
+###
