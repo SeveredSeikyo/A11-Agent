@@ -7,6 +7,7 @@ import { getNews } from "./tools/newsTool";
 import { webSearch } from "./tools/webSearchTool";
 import { sendSlackMessage } from "./tools/slackTool";
 import { sendDiscordMessage } from "./tools/discordTool";
+import { getLocation } from "./tools/geoLocationTool";
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL;
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
@@ -28,7 +29,8 @@ export const agent = createAgent({
         getNews,
         webSearch,
         sendSlackMessage,
-        sendDiscordMessage
+        sendDiscordMessage,
+        getLocation
     ], 
 });
 

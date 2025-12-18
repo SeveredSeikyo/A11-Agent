@@ -1,11 +1,14 @@
 import dotenv from "dotenv";
 import { Elysia } from "elysia";
+import { ip } from "elysia-ip";
 import { agent } from "./src/agent";
 import { HumanMessage } from "@langchain/core/messages";
 
 dotenv.config();
 
-const app = new Elysia();
+const app = new Elysia()
+    .use(ip());
+
 const PORT = process.env.PORT || 3000;
 
 app.post("/agent", async (ctx) => {
@@ -15,9 +18,20 @@ app.post("/agent", async (ctx) => {
         return new Response("Message is required", { status: 400 });
     }
 
+    // IP provided by elysia-ip
+    const clientIp = ctx.ip ?? "unknown";
+
+    const enrichedMessage = `
+    User Message:
+    ${userMessage}
+
+    Metadata:
+    - IP Address: ${clientIp}
+    `.trim();
+
     try {
         const result = await agent.invoke({
-            messages: [new HumanMessage(userMessage)],
+            messages: [new HumanMessage(enrichedMessage)],
         });
 
         const finalMessage = result.messages

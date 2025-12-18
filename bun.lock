@@ -15,6 +15,7 @@
         "discord.js": "^14.25.1",
         "dotenv": "^17.2.3",
         "elysia": "^1.4.18",
+        "elysia-ip": "^1.0.10",
         "langchain": "^1.1.5",
         "newsapi": "^2.4.1",
         "nodemailer": "^7.0.11",
@@ -383,6 +384,8 @@
     "effect": ["effect@3.18.4", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "fast-check": "^3.23.1" } }, "sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA=="],
 
     "elysia": ["elysia@1.4.18", "", { "dependencies": { "cookie": "^1.1.1", "exact-mirror": "0.2.5", "fast-decode-uri-component": "^1.0.1", "memoirist": "^0.4.0" }, "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "@types/bun": ">= 1.2.0", "file-type": ">= 20.0.0", "openapi-types": ">= 12.0.0", "typescript": ">= 5.0.0" }, "optionalPeers": ["@types/bun", "typescript"] }, "sha512-A6BhlipmSvgCy69SBgWADYZSdDIj3fT2gk8/9iMAC8iD+aGcnCr0fitziX0xr36MFDs/fsvVp8dWqxeq1VCgKg=="],
+
+    "elysia-ip": ["elysia-ip@1.0.10", "", { "peerDependencies": { "elysia": ">= 1.0.9" } }, "sha512-xmCxPOl4266sq6CLk5d82P3BZOatG9z0gMP473cYEnORssuopbEI8GAwpOhiaz69X76AOrkYgvCdLkqMJC49dQ=="],
 
     "empathic": ["empathic@2.0.0", "", {}, "sha512-i6UzDscO/XfAcNYD75CfICkmfLedpyPDdozrLMmQc5ORaQcdMoc21OnlEylMIqI7U8eniKrPMxxtj8k0vhmJhA=="],
 

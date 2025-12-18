@@ -42,3 +42,12 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:3000/agent
+Content-Type: application/json
+
+{
+    "message": "I have a cricket match tomorrow. Is it good day to go outside and play the match tomorrow?"
+}
+
+###
