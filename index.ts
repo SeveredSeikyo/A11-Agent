@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { Elysia } from "elysia";
+import { cors } from '@elysiajs/cors';
 import { ip } from "elysia-ip";
 import { agent } from "./src/agent";
 import { HumanMessage } from "@langchain/core/messages";
@@ -7,7 +8,8 @@ import { HumanMessage } from "@langchain/core/messages";
 dotenv.config();
 
 const app = new Elysia()
-    .use(ip());
+    .use(ip())
+    .use(cors());
 
 const PORT = process.env.PORT || 3000;
 
@@ -27,6 +29,9 @@ app.post("/agent", async (ctx) => {
 
     Metadata:
     - IP Address: ${clientIp}
+
+    System Prompt:
+    - Ignore IP Address unless anything related to IP such as location comes up.
     `.trim();
 
     try {
