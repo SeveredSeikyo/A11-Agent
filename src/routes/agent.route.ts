@@ -1,6 +1,5 @@
 import { Elysia } from "elysia";
 import { ip } from "elysia-ip";
-import { runAgent } from "../agent/runner";
 import { agent } from "../agent/agent";
 import { HumanMessage } from "@langchain/core/messages";
 
