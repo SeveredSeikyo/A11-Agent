@@ -4,6 +4,7 @@ import { getSystemInfo } from "../utils/getArch.util";
 
 export const getPortsTool = tool(
   async ({ project_kind }: { project_kind: "frontend" | "backend" }) => {
+    console.log("Ports Tool calling...");
     try {
       /**
        * Reserved Port Ranges:
@@ -18,6 +19,8 @@ export const getPortsTool = tool(
         "reserve-port",
         project_kind,
       ]);
+
+      console.log("Ports Tool called.");
 
       return {
         success: true,

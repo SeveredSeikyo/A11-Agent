@@ -5,6 +5,7 @@ import { memoryTool } from "./memoryTool";
 
 export const getArchTool = tool(
   async () => {
+    console.log("Arch Tool calling...");
     const memory = await memoryTool.invoke({
       action: "read",
       key: "architecture",
@@ -18,7 +19,7 @@ export const getArchTool = tool(
       };
     }
 
-    const archData = await getSystemInfo(["get-arch"]);
+    const archData:unknown = await getSystemInfo(["get-arch"]);
 
     await memoryTool.invoke({
       action: "write",
@@ -28,6 +29,8 @@ export const getArchTool = tool(
         timestamp: Date.now(),
       },
     });
+
+    console.log("Arch Tool called.");
 
     return {
       success: true,

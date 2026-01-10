@@ -5,10 +5,12 @@ import { writeMemory } from "../utils/writeMemory.util";
 
 export const memoryTool = tool(
   async ({ action, key, value }) => {
+    console.log("Memory Tool calling...");
     try {
       const memory = (await readMemory()) || {};
 
       if (action === "read") {
+        console.log("Memory Tool called.");
         return {
           success: true,
           memory: key ? memory[key] : memory,
@@ -18,6 +20,7 @@ export const memoryTool = tool(
       if (action === "write") {
         memory[key] = value;
         await writeMemory(memory);
+        console.log("Memory Tool called.");
         return { success: true };
       }
     } catch (e) {
