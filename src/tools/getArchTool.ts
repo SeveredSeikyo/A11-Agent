@@ -1,25 +1,44 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import { getRustArchInfo } from "../utils/getArch.util";
+import { getSystemInfo } from "../utils/getArch.util";
+import { memoryTool } from "./memoryTool";
 
 export const getArchTool = tool(
-    async () => {
-        try{
-            const archData = await getRustArchInfo();
+  async () => {
+    const memory = await memoryTool.invoke({
+      action: "read",
+      key: "architecture",
+    });
 
-            return {
-                success: true,
-                architecture: archData
-            }
-
-        }catch(e){
-            console.log(`error: `,e);
-        }
-    }, 
-    {
-        name: "getArch",
-        description: "Retrieves detailed system architecture and platform information by executing the internal Rust-based diagnostic binary. Use this whenever you need to know the hardware architecture (x86_64, arm, etc.) or OS details of the host machine.",
-        schema: z.object({}),
+    if (memory?.memory) {
+      return {
+        success: true,
+        architecture: memory.memory,
+        source: "memory",
+      };
     }
 
-)
+    const archData = await getSystemInfo(["get-arch"]);
+
+    await memoryTool.invoke({
+      action: "write",
+      key: "architecture",
+      value: {
+        ...archData,
+        timestamp: Date.now(),
+      },
+    });
+
+    return {
+      success: true,
+      architecture: archData,
+      source: "system",
+    };
+  },
+  {
+    name: "getArch",
+    description:
+      "Retrieves system architecture. Reuses persistent memory if available; otherwise queries the system and stores the result.",
+    schema: z.object({}),
+  }
+);

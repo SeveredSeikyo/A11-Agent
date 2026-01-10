@@ -1,5 +1,5 @@
 use serde::Serialize;
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use std::env;
 
 #[derive(Serialize, Debug)]
@@ -11,7 +11,7 @@ struct ArchInfo {
 
 /// Detects architecture using Rust's built-in environment constants.
 /// This is cross-platform and doesn't rely on external commands like 'uname'.
-fn detect_architecture() -> Result<ArchInfo> {
+pub fn run() -> Result<()> {
     // Rust provides these at compile time/runtime via std::env::consts
     let arch = env::consts::ARCH.to_string();
     let os = env::consts::OS.to_string();
@@ -27,20 +27,14 @@ fn detect_architecture() -> Result<ArchInfo> {
         _ => "unknown",
     }.to_string();
 
-    Ok(ArchInfo {
+    let info = ArchInfo {
         arch,
         platform,
         os,
-    })
-}
+    };
 
-fn main() -> Result<()> {
-    let info = detect_architecture()?;
-    
-    // Ensure you have: serde = { version = "1.0", features = ["derive"] } in Cargo.toml
-    let json = serde_json::to_string_pretty(&info)
-        .map_err(|e| anyhow!("Serialization error: {}", e))?;
-    
-    println!("{}", json);
+    println!("{}",serde_json::to_string_pretty(&info)?);
+
     Ok(())
 }
+

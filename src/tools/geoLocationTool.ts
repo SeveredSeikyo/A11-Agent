@@ -5,10 +5,7 @@ import { ipLocation } from "../utils/iplocation.util";
 export const getLocation = tool(
     async ({ ip }: { ip: string }) => {
         const result = await ipLocation(ip);
-        return {
-            success: true,
-            ...result,
-        };
+        return result;
     },
     {
         name: "get_ip_location",
