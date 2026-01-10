@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { ip } from "elysia-ip";
 import { agent } from "../agent/agent";
 import { HumanMessage } from "@langchain/core/messages";
+import { invokeSequential } from "../agent/invokeSequential.agent";
 
 export const agentRouter = new Elysia()
   .use(ip())
@@ -27,25 +28,18 @@ export const agentRouter = new Elysia()
     `.trim();
 
     try {
-        const result = await agent.invoke({
+        const result = await invokeSequential(agent,
+          {
             messages: [new HumanMessage(enrichedMessage)],
-        });
-
-        const finalMessage = result.messages
-            .slice()
-            .reverse()
-            .find((m) => m._getType() === "ai");
-
-        return new Response(
-            typeof finalMessage?.content === "string"
-                ? finalMessage.content
-                : JSON.stringify(finalMessage?.content ?? ""),
-            {
-                headers: {
-                    "Content-Type": "text/plain; charset=utf-8",
-                },
-            }
+          },
         );
+
+        // The result is the final state. The last message is usually the AI's final answer.
+        const lastMessage = result.messages[result.messages.length - 1];
+
+        return new Response(lastMessage?.content.toString(), {
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
     } catch (err) {
         console.error("Agent error:", err);
         return new Response("Internal Server Error", { status: 500 });

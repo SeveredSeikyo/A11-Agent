@@ -1,4 +1,4 @@
-import { createAgent } from "langchain"; 
+import { createAgent } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
 import { getWeatherToday } from "../tools/weatherTool";
 import { getDateTool } from "../tools/getDateTool";
@@ -16,16 +16,16 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL;
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
 
 const model = new ChatOpenAI({
-    model: "qwen3:1.7b", 
+    model: "phi3", 
+    temperature: 0,
     configuration: {
         baseURL: `${OLLAMA_BASE_URL}/v1` 
     },
-    apiKey: OLLAMA_API_KEY
+    apiKey: OLLAMA_API_KEY,
+    
 });
 
-export const agent = createAgent({
-    model: model, 
-    tools: [
+const tools = [
         getWeatherToday,
         getDateTool,
         sendEmail,
@@ -37,7 +37,11 @@ export const agent = createAgent({
         getArchTool,
         getPortsTool,
         memoryTool
-    ], 
+];
+
+export const agent = createAgent({
+    model: model, 
+    tools: tools, 
 });
 
 
