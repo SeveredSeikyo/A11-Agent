@@ -2,7 +2,6 @@ import { Elysia } from "elysia";
 import { ip } from "elysia-ip";
 import { agent } from "../agent/agent";
 import { HumanMessage } from "@langchain/core/messages";
-import { invokeSequential } from "../agent/invokeSequential.agent";
 
 export const agentRouter = new Elysia()
   .use(ip())
@@ -28,11 +27,9 @@ export const agentRouter = new Elysia()
     `.trim();
 
     try {
-        const result = await invokeSequential(agent,
-          {
-            messages: [new HumanMessage(enrichedMessage)],
-          },
-        );
+        const result = await agent.invoke({
+          messages: new HumanMessage(enrichedMessage)
+        })
 
         // The result is the final state. The last message is usually the AI's final answer.
         const lastMessage = result.messages[result.messages.length - 1];

@@ -19,13 +19,13 @@ export const getArchTool = tool(
       };
     }
 
-    const archData:unknown = await getSystemInfo(["get-arch"]);
+    const archData = await getSystemInfo(["get-arch"]);
 
     await memoryTool.invoke({
       action: "write",
       key: "architecture",
       value: {
-        ...archData,
+        ...(archData as Record<string, unknown>),
         timestamp: Date.now(),
       },
     });

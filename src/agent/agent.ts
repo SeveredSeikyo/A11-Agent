@@ -16,7 +16,7 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL;
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
 
 const model = new ChatOpenAI({
-    model: "phi3", 
+    model: "qwen3:1.7b", 
     temperature: 0,
     configuration: {
         baseURL: `${OLLAMA_BASE_URL}/v1` 
@@ -43,5 +43,3 @@ export const agent = createAgent({
     model: model, 
     tools: tools, 
 });
-
-

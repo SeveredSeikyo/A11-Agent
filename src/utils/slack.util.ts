@@ -16,3 +16,13 @@ export const postToSlack = async (text: string) => {
         console.log("Error occurred.")
     }
 };
+
+export const buildSummary = (state: any): string => {
+    // Build a summary message from the state results
+    const results = state.results || {};
+    let summary = "Agent Execution Summary:\n";
+    for (const [key, value] of Object.entries(results)) {
+        summary += `${key}: ${JSON.stringify(value)}\n`;
+    }
+    return summary.trim();
+};
