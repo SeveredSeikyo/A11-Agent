@@ -29,7 +29,7 @@ POST http://localhost:5000/agent
 Content-Type: application/json
 
 {
-    "message": "Hey, quick help 🙂 What’s the weather we are expecting today? Also, what’s the current date and time right now? I’ve been hearing a lot about Tavily lately — what exactly is it used for? Can you also check the latest AI news from the past week? Oh, and please send a quick email to testone01151990@gmail.com saying “Hi, this is a test message from the AI agent.” attached with weather, date, search response and articles. Also send weather details, articles, date and search response in discord."
+    "message": "Hey, quick help 🙂 What’s the weather we are expecting today? Also, what’s the current date and time right now? I’ve been hearing a lot about Tavily lately — what exactly is it used for? Can you also check the latest AI news from the past week? Oh, and please send a quick email to testone01151990@gmail.com saying “Hi, this is a test message from the AI agent.”. Also send weather details, articles, date and search response in discord and slack."
 }
 
 ###
