@@ -7,7 +7,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3000/agent
+POST http://localhost:5000/agent
 Content-Type: application/json
 
 {
@@ -29,12 +29,12 @@ POST http://localhost:5000/agent
 Content-Type: application/json
 
 {
-    "message": "Hey, quick help 🙂 What’s the weather like today in Hyderabad? Also, what’s the current date and time right now? I’ve been hearing a lot about Tavily lately — what exactly is it used for? Can you also check the latest AI news from the past week? Oh, and please send a quick email to testone01151990@gmail.com saying “Hi, this is a test message from the AI agent.” Also send weather details, articles, date and search response in slack and discord."
+    "message": "Hey, quick help 🙂 What’s the weather like today in Hyderabad? Also, what’s the current date and time right now? I’ve been hearing a lot about Tavily lately — what exactly is it used for? Can you also check the latest AI news from the past week? Oh, and please send a quick email to testone01151990@gmail.com saying “Hi, this is a test message from the AI agent.” Also send weather details, articles, date and search response in discord."
 }
 
 ###
 
-POST http://localhost:3000/agent
+POST http://localhost:5000/agent
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3000/agent
+POST http://localhost:5000/agent
 Content-Type: application/json
 
 {
@@ -66,4 +66,13 @@ Content-Type: application/json
 
 {
     "message": "what is current weather in Hyderabad and date"
+}
+
+###
+
+POST http://localhost:5000/agent
+Content-Type: application/json
+
+{
+    "message": "Hello. How are you?"
 }
