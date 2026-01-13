@@ -54,7 +54,7 @@ export const TOOL_CATALOG = [
     },
     returns: {
       topic: "string",
-      articles: "array of { title, description, url }"
+      articles: "string"
     },
     notes: "Articles can be summarized, emailed, or posted to Slack/Discord"
   },
@@ -95,19 +95,19 @@ export const TOOL_CATALOG = [
     notes: "Message content usually composed from previous tool outputs"
   },
 
-  {
-    name: "get_ip_location",
-    use: "Get location from IP",
-    args: {
-      ip: "string"
-    },
-    returns: {
-      city: "string",
-      country: "string",
-      timezone: "string"
-    },
-    notes: "Timezone output may be passed to getCurrentDateTime"
-  },
+  // {
+  //   name: "get_ip_location",
+  //   use: "Get location from IP",
+  //   args: {
+  //     ip: "string"
+  //   },
+  //   returns: {
+  //     city: "string",
+  //     country: "string",
+  //     timezone: "string"
+  //   },
+  //   notes: "Timezone output may be passed to getCurrentDateTime"
+  // },
 
   {
     name: "getArch",

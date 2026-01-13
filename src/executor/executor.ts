@@ -68,6 +68,10 @@ export async function executeSteps(steps: Step[]) {
 
     const executor: AnyTool = TOOL_EXECUTORS[normalizedTool]
 
+    // console.log(typeof(step.args), step.args)
+
+    // console.log(await executor.invoke(step.args ?? {}))
+
     const resolvedArgs = resolveArgs(step.args ?? {}, results)
 
     const output = await executor.invoke(resolvedArgs)

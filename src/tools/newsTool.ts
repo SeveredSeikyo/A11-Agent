@@ -3,6 +3,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { fetchTodayNews } from "../utils/news.util";
 
+
 export const getNews = tool(
   async ({ topic, range }) => {
     console.log("📰 Fetching news...");
@@ -11,11 +12,30 @@ export const getNews = tool(
 
     console.log("📰 News fetched");
 
+    if (articles.length) {
+
+      let article_summary = ""
+
+      for (let i = 0; i < articles.length; i++) {
+        
+        const { title, description } = articles[i]
+
+        article_summary += `Title ${i+1}: ${title} \n`
+      }
+
+      return {
+        success: articles.length > 0,
+        topic,
+        range,
+        articles: article_summary,
+      };
+    }
+
     return {
       success: articles.length > 0,
       topic,
       range,
-      articles,
+      articles: "",
     };
   },
   {

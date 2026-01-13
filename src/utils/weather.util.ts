@@ -19,7 +19,7 @@ export const fetchWeather = async(
     return {
         city: weatherData.name,
         country: weatherData.sys.country,
-        temperature: `${Math.round(weatherData.main.temp)}°C`,
+        temperature: `${Math.round(weatherData.main.temp)}`,
         condition: weatherData.weather[0].main,
         description: weatherData.weather[0].description,
         humidity: `${weatherData.main.humidity}%`,

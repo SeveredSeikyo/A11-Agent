@@ -11,7 +11,8 @@ export const model = new ChatOllama({
     //     baseURL: `${OLLAMA_BASE_URL}/v1` 
     // },
     // apiKey: OLLAMA_API_KEY,
-    baseUrl: `${OLLAMA_BASE_URL}`
+    baseUrl: `${OLLAMA_BASE_URL}`,
+    think: false
     
 });
 

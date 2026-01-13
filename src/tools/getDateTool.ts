@@ -6,7 +6,10 @@ export const getDateTool = tool(
     console.log("🗓️ Date tool calling...");
 
     // Default to Asia/Kolkata
-    const tz = timezone || "Asia/Kolkata";
+    let tz = timezone || "Asia/Kolkata";
+    if (tz == "Asia/Hyderabad") {
+      tz = "Asia/Kolkata"
+    }
     const now = new Date();
 
     const formatter = new Intl.DateTimeFormat("en-IN", {

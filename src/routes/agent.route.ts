@@ -1,22 +1,12 @@
-// src/routes/agent.route.ts
-
 import { Elysia } from "elysia"
 import { ip } from "elysia-ip"
 import { model } from "../agent/agent"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
-import {
-  systemPrompt,
-  validatorPrompt,
-  conclusionPrompt,
-} from "../executor/systemPrompt"
+import { systemPrompt, conclusionPrompt } from "../executor/systemPrompt"
 import { executeSteps } from "../executor/executor"
+import { getLocation } from "../tools/geoLocationTool"
+import { getClientIP, isPrivateIP, normalizePlannerOutput, sanitizeJSON } from "../executor/utils/agentUtils"
 
-function sanitizeJSON(text: string) {
-  return text
-    .replace(/\/\/.*$/gm, "")
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .trim()
-}
 
 export const agentRouter = new Elysia()
   .use(ip())
@@ -26,11 +16,23 @@ export const agentRouter = new Elysia()
       return new Response("Message is required", { status: 400 })
     }
 
-    const clientIp = ctx.ip ?? "unknown"
+    const clientIp = getClientIP(ctx)
+
+    let ipLocation = ""
+    if (clientIp !== "unknown" && !isPrivateIP(clientIp)) {
+      try {
+        const ipResponse = await getLocation.invoke({ ip: clientIp })
+        if (ipResponse?.success) {
+          ipLocation = `User IP: ${ipResponse.ip}, Location: ${ipResponse.region}, ${ipResponse.city}, ${ipResponse.country}, Timezone: ${ipResponse.timezone}`
+        }
+      } catch {}
+    }
 
     const enrichedMessage = `
     User Message:
     ${userMessage}
+
+    ${ipLocation ? `Metadata: ${ipLocation}` : ""}
     `.trim()
 
     try {
@@ -41,39 +43,31 @@ export const agentRouter = new Elysia()
       ])
 
       const plannerRaw = plannerResponse.content.toString()
-      const plannerParsed = JSON.parse(sanitizeJSON(plannerRaw))
+      const plannerParsed = normalizePlannerOutput(
+        JSON.parse(sanitizeJSON(plannerRaw))
+      )
 
-      /** 2️⃣ NO TOOLS REQUIRED → NORMAL LLM RESPONSE */
       if (!plannerParsed.tools_required) {
         const normalResponse = await model.invoke([
           new HumanMessage(userMessage),
         ])
-
-        return {
-          AI_message: normalResponse.content.toString(),
-        }
+        return { AI_message: normalResponse.content.toString() }
       }
 
-      /** 3️⃣ VALIDATOR */
-      const validatorResponse = await model.invoke([
-        new SystemMessage(validatorPrompt),
-        new HumanMessage(plannerRaw),
-      ])
+      if (!Array.isArray(plannerParsed.steps)) {
+        throw new Error("Planner output invalid: steps[] missing")
+      }
 
-      const validated = JSON.parse(
-        sanitizeJSON(validatorResponse.content.toString())
-      )
+      /** 2️⃣ EXECUTOR */
+      const toolResults = await executeSteps(plannerParsed.steps)
 
-      /** 4️⃣ EXECUTOR */
-      const toolResults = await executeSteps(validated.steps)
-
-      /** 5️⃣ CONCLUSION */
+      /** 3️⃣ CONCLUSION */
       const finalPrompt = `
       User Message:
       ${userMessage}
 
       Tool Results:
-      ${JSON.stringify(toolResults, null, 2)}
+      ${JSON.stringify(toolResults)}
       `.trim()
 
       const finalResponse = await model.invoke([
@@ -81,11 +75,9 @@ export const agentRouter = new Elysia()
         new HumanMessage(finalPrompt),
       ])
 
-      return {
-        AI_message: finalResponse.content.toString(),
-      }
+      return { AI_message: finalResponse.content.toString() }
     } catch (err) {
       console.error("Agent error:", err)
       return new Response("Internal Server Error", { status: 500 })
     }
-})
+  })
