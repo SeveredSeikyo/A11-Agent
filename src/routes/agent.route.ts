@@ -6,6 +6,7 @@ import { systemPrompt, conclusionPrompt } from "../executor/systemPrompt"
 import { executeSteps } from "../executor/executor"
 import { getLocation } from "../tools/geoLocationTool"
 import { getClientIP, isPrivateIP, normalizePlannerOutput, sanitizeJSON } from "../executor/utils/agentUtils"
+import { memoryTool } from "../tools/memoryTool"
 
 
 export const agentRouter = new Elysia()
@@ -17,23 +18,53 @@ export const agentRouter = new Elysia()
     }
 
     const clientIp = getClientIP(ctx)
+    const agentMemory = await memoryTool.invoke({ action: "read", key: "" }) || ""
+    let memoryLocation = ""
+    let memoryArchitecture = ""
+    if (agentMemory) {
+      memoryLocation = agentMemory.memory?.location?.trim() || ""
+      memoryArchitecture = agentMemory.memory?.architecture
+        ? `${agentMemory.memory.architecture.arch} - ${agentMemory.memory.architecture.platform}`
+        : ""
+    }
 
+    // IP lookup ONLY if memory location missing
     let ipLocation = ""
-    if (clientIp !== "unknown" && !isPrivateIP(clientIp)) {
+    let ipTimezone = ""
+
+    if (!memoryLocation && clientIp !== "unknown" && !isPrivateIP(clientIp)) {
       try {
         const ipResponse = await getLocation.invoke({ ip: clientIp })
         if (ipResponse?.success) {
-          ipLocation = `User IP: ${ipResponse.ip}, Location: ${ipResponse.region}, ${ipResponse.city}, ${ipResponse.country}, Timezone: ${ipResponse.timezone}`
+          ipLocation = `${ipResponse.city}, ${ipResponse.country}`
+          ipTimezone = ipResponse.timezone
         }
       } catch {}
     }
+
+    // FINAL resolved location (authoritative)
+    const resolvedLocation = memoryLocation || ipLocation
+
 
     const enrichedMessage = `
     User Message:
     ${userMessage}
 
-    ${ipLocation ? `Metadata: ${ipLocation}` : ""}
+    System Context (AUTHORITATIVE — DO NOT OVERRIDE):
+    ${resolvedLocation ? `Resolved Location: ${resolvedLocation}` : "Location: Unknown"}
+
+    Additional Context (LOW PRIORITY):
+    ${ipLocation && !memoryLocation ? `IP Location: ${ipLocation}` : ""}
+    ${memoryArchitecture ? `Architecture: ${memoryArchitecture}` : ""}
+
+    Rules:
+    - Use Resolved Location verbatim for all tools
+    - Never override memory-backed values
+    - IP data is fallback only
     `.trim()
+
+
+    console.log(enrichedMessage)
 
     try {
       /** 1️⃣ PLANNER */
@@ -47,9 +78,11 @@ export const agentRouter = new Elysia()
         JSON.parse(sanitizeJSON(plannerRaw))
       )
 
+      console.log(JSON.stringify(plannerParsed))
+
       if (!plannerParsed.tools_required) {
         const normalResponse = await model.invoke([
-          new HumanMessage(userMessage),
+          new HumanMessage(enrichedMessage),
         ])
         return { AI_message: normalResponse.content.toString() }
       }
