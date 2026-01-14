@@ -1,12 +1,14 @@
 import { Elysia } from "elysia"
 import { ip } from "elysia-ip"
-import { model } from "../agent/agent"
+import { model, thinkModel } from "../agent/agent"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
 import { systemPrompt, conclusionPrompt } from "../executor/systemPrompt"
 import { executeSteps } from "../executor/executor"
 import { getLocation } from "../tools/geoLocationTool"
 import { getClientIP, isPrivateIP, normalizePlannerOutput, sanitizeJSON } from "../executor/utils/agentUtils"
 import { memoryTool } from "../tools/memoryTool"
+import { dependentToolPrompt, draftingPrompt, independentToolPrompt, reasoningPrompt } from "../prompts/toolPrompt"
+import { splitSystemPrompt } from "../prompts/splitSystemPrompt"
 
 
 export const agentRouter = new Elysia()
@@ -51,17 +53,21 @@ export const agentRouter = new Elysia()
     ${userMessage}
 
     System Context (AUTHORITATIVE — DO NOT OVERRIDE):
-    ${resolvedLocation ? `Resolved Location: ${resolvedLocation}` : "Location: Unknown"}
+    ${resolvedLocation ? `Resolved Location (fallback): ${resolvedLocation}` : "Resolved Location (fallback): Unknown"}
 
     Additional Context (LOW PRIORITY):
-    ${ipLocation && !memoryLocation ? `IP Location: ${ipLocation}` : ""}
+    ${ipLocation && !memoryLocation ? `IP Location (last resort): ${ipLocation}` : ""}
     ${memoryArchitecture ? `Architecture: ${memoryArchitecture}` : ""}
 
     Rules:
-    - Use Resolved Location verbatim for all tools
-    - Never override memory-backed values
-    - IP data is fallback only
+    - IMPORTANT: ONLY USE TOOLS WHEN ABSOLUTELY REQUIRED!!
+    - If the USER explicitly mentions a location, ALWAYS use that location
+    - Use Resolved Location ONLY when the user does NOT specify a location
+    - Never override user-provided values
+    - Never override memory-backed values unless user explicitly contradicts them
+    - IP data is fallback only and lowest priority
     `.trim()
+
 
 
     console.log(enrichedMessage)
@@ -93,6 +99,7 @@ export const agentRouter = new Elysia()
 
       /** 2️⃣ EXECUTOR */
       const toolResults = await executeSteps(plannerParsed.steps)
+
 
       /** 3️⃣ CONCLUSION */
       const finalPrompt = `

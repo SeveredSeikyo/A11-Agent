@@ -94,3 +94,39 @@ Content-Type: application/json
 {
     "message": "what is current date"
 }
+
+###
+
+POST http://localhost:5000/agent
+Content-Type: application/json
+
+{
+    "message": "Get News about AI for the past few days and send them in discord"
+}
+
+###
+
+POST http://localhost:5000/agent
+Content-Type: application/json
+
+{
+    "message": "send a mail to ashb01012000@gmail.com asking for leave."
+}
+
+###
+
+POST http://localhost:5000/agent
+Content-Type: application/json
+
+{
+    "message": "Save this to memory. I am Kevin Eleven, a student."
+}
+
+###
+
+POST http://localhost:5000/agent
+Content-Type: application/json
+
+{
+    "message": "Fetch AI Articles in the past few days"
+}

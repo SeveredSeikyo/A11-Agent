@@ -14,6 +14,7 @@ function resolveValue(value: any, context: Record<string, any>): any {
     const [, stepId, path] =
       value.match(/^\{\{([\w\d_]+)(?:\.([\w\d_\[\]]+))?\}\}$/) || []
 
+    if (!stepId) return null
     const base = context[stepId]
     if (!base) return null
 

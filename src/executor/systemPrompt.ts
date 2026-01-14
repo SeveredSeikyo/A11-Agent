@@ -20,6 +20,11 @@ If tools are required, respond ONLY in this JSON format:
 If no tools are required, respond:
 { "tools_required": false }
 
+If the user message is a greeting, small talk, or conversational
+(e.g. "hello", "hi", "how are you"),
+tools_required MUST be false.
+
+
 Steps are executed sequentially.
 Later steps may reference earlier results using {{step_name.field}}.
 

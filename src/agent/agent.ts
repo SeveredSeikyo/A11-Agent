@@ -16,6 +16,17 @@ export const model = new ChatOllama({
     
 });
 
+export const thinkModel = new ChatOllama({
+    model: "qwen3:1.7b", 
+    temperature: 0,
+    // configuration: {
+    //     baseURL: `${OLLAMA_BASE_URL}/v1` 
+    // },
+    // apiKey: OLLAMA_API_KEY,
+    baseUrl: `${OLLAMA_BASE_URL}`
+    
+});
+
 // const llamaPath = "../../../llama.cpp/models/Phi3/Phi-3.gguf"
 
 // export const model = await ChatLlamaCpp.initialize({

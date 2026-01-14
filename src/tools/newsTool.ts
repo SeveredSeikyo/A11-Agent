@@ -2,6 +2,9 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { fetchTodayNews } from "../utils/news.util";
+import { model } from "../agent/agent";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { articleSummariserPrompt } from "../prompts/toolPrompt";
 
 
 export const getNews = tool(
@@ -10,33 +13,26 @@ export const getNews = tool(
 
     const articles = await fetchTodayNews({ topic, range });
 
+    // console.log(JSON.stringify(articles))
+
     console.log("📰 News fetched");
 
-    if (articles.length) {
+    const summary_response = await model.invoke([
+      new SystemMessage(articleSummariserPrompt),
+      new HumanMessage(JSON.stringify(articles))
+    ])
 
-      let article_summary = ""
+    const summaryRaw = summary_response.content.toString()
+    const article_summary = JSON.parse(summaryRaw)
 
-      for (let i = 0; i < articles.length; i++) {
-        
-        const { title, description } = articles[i]
-
-        article_summary += `Title ${i+1}: ${title} \n`
-      }
-
-      return {
-        success: articles.length > 0,
-        topic,
-        range,
-        articles: article_summary,
-      };
-    }
+    console.log(article_summary)
 
     return {
       success: articles.length > 0,
       topic,
       range,
-      articles: "",
-    };
+      articles: ""
+    }
   },
   {
     name: "getNews",
